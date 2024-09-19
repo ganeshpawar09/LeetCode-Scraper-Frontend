@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LeetCode Profile</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Profile Header -->
+    <div class="profile-header">
+      <img id="profile-avatar" src="" alt="User Avatar">
+      <div class="profile-info">
+        <h1 id="profile-name">Name</h1>
+        <p id="profile-country">Country</p>
+        <div class="social-links">
+          <a id="github-link" href="#" target="_blank"><i class="fab fa-github"></i></a>
+          <a id="linkedin-link" href="#" target="_blank"><i class="fab fa-linkedin"></i></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Badges Section -->
+    <div class="badge-section">
+      <h2>Badges</h2>
+      <div id="badges-container"></div>
+    </div>
+
+    <!-- Problem Solving Statistics -->
+    <div class="stat-section">
+      <h2>Problem Solving Statistics (Solved vs Unsolved)</h2>
+      <canvas id="solved-pie-chart" class="pie-chart"></canvas>
+    </div>
+
+    <!-- Language Statistics -->
+    <div class="stat-section">
+      <h2>Languages Used</h2>
+      <canvas id="language-pie-chart" class="pie-chart"></canvas>
+    </div>
+
+    <!-- Heatmap Section -->
+    <div class="heatmap-section">
+      <h2>Submission Heatmap (Last 12 Months)</h2>
+      <div id="submission-heatmap" class="heatmap"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
