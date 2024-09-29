@@ -1,145 +1,110 @@
-// Example profile data (from your LeetCode scraper)
-const profileData = {
-  userPublicProfile: {
-    matchedUser: {
-      username: "ganeshpawar09",
-      profile: {
-        userAvatar:
-          "https://assets.leetcode.com/users/avatars/avatar_1703571021.png",
-        realName: "Ganesh",
-        countryName: "India",
-      },
-      githubUrl: "https://github.com/ganeshpawar09",
-      linkedinUrl: "https://linkedin.com/in/ganesh-pawar-171950245",
-    },
-  },
-  userProblemsSolved: {
-    allQuestionsCount: [
-      { difficulty: "Easy", count: 826 },
-      { difficulty: "Medium", count: 1723 },
-      { difficulty: "Hard", count: 745 },
-    ],
-  },
-  userBadges: {
-    matchedUser: {
-      badges: [
-        {
-          name: "100 Days Badge 2024",
-          icon: "https://assets.leetcode.com/static_assets/marketing/2024-100-lg.png",
-        },
-        {
-          name: "50 Days Badge 2024",
-          icon: "https://assets.leetcode.com/static_assets/marketing/2024-50-lg.png",
-        },
-      ],
-    },
-  },
-  languageStats: {
-    matchedUser: {
-      languageProblemCount: [
-        { languageName: "C++", problemsSolved: 294 },
-        { languageName: "Java", problemsSolved: 43 },
-        { languageName: "MySQL", problemsSolved: 32 },
-        { languageName: "Python3", problemsSolved: 1 },
-      ],
-    },
-  },
-  userProfileCalendar: {
-    matchedUser: {
-      userCalendar: {
-        submissionCalendar: {
-          1704067200: 1,
-          1704153600: 4,
-          1707004800: 11,
-          1717718400: 24,
-          1717804800: 13,
-        },
-      },
-    },
-  },
-};
+// Fetch profile data from localStorage
+const profileData = JSON.parse(localStorage.getItem("profileData"));
+console.log(profileData);
 
 // Display profile information
 document.getElementById("profile-avatar").src =
-  profileData.userPublicProfile.matchedUser.profile.userAvatar;
-document.getElementById("profile-name").textContent =
-  profileData.userPublicProfile.matchedUser.profile.realName;
+  profileData.data.userPublicProfile.matchedUser.profile.userAvatar;
+document.getElementById("profile-username").textContent =
+  profileData.data.userPublicProfile.matchedUser.username;
+document.getElementById("profile-fullname").textContent =
+  profileData.data.userPublicProfile.matchedUser.profile.realName;
 document.getElementById("profile-country").textContent =
-  profileData.userPublicProfile.matchedUser.profile.countryName;
+  profileData.data.userPublicProfile.matchedUser.profile.countryName;
+document.getElementById("profile-ranking-value").textContent =
+  profileData.data.userPublicProfile.matchedUser.profile.ranking;
 document.getElementById("github-link").href =
-  profileData.userPublicProfile.matchedUser.githubUrl;
+  profileData.data.userPublicProfile.matchedUser.githubUrl;
 document.getElementById("linkedin-link").href =
-  profileData.userPublicProfile.matchedUser.linkedinUrl;
+  profileData.data.userPublicProfile.matchedUser.linkedinUrl;
 
-// Display badges
-const badges = profileData.userBadges.matchedUser.badges;
-const badgesContainer = document.getElementById("badges-container");
-badges.forEach((badge) => {
-  const img = document.createElement("img");
-  img.src = badge.icon;
-  img.alt = badge.name;
-  badgesContainer.appendChild(img);
-});
+// Display skills
+const skillsList = document.getElementById("skills-list");
+profileData.data.userPublicProfile.matchedUser.profile.skillTags.forEach(
+  (skill) => {
+    const skillDiv = document.createElement("div");
+    skillDiv.classList.add("skill-item");
+    skillDiv.textContent = skill;
+    skillsList.appendChild(skillDiv);
+  }
+);
 
-// Display problem-solving statistics (Solved vs Unsolved Pie Chart)
-const solvedChartCtx = document
-  .getElementById("solved-pie-chart")
-  .getContext("2d");
-const totalProblems = 4000; // Example total problems
-const easySolved = profileData.userProblemsSolved.allQuestionsCount.find(
-  (d) => d.difficulty === "Easy"
-).count;
-const mediumSolved = profileData.userProblemsSolved.allQuestionsCount.find(
-  (d) => d.difficulty === "Medium"
-).count;
-const hardSolved = profileData.userProblemsSolved.allQuestionsCount.find(
-  (d) => d.difficulty === "Hard"
-).count;
+// Display problem-solving statistics (Solved & Total)
+const solvedStats =
+  profileData.data.userProblemsSolved.matchedUser.submitStatsGlobal
+    .acSubmissionNum;
+const totalStats = profileData.data.userProblemsSolved.allQuestionsCount;
 
-const solvedData = {
-  labels: ["Easy Solved", "Medium Solved", "Hard Solved", "Unsolved"],
-  datasets: [
-    {
-      data: [
-        easySolved,
-        mediumSolved,
-        hardSolved,
-        totalProblems - (easySolved + mediumSolved + hardSolved),
+function createPieChart(ctx, solved, total, label) {
+  return new Chart(ctx, {
+    type: "pie",
+    data: {
+      labels: [${label} Solved, Not Solved],
+      datasets: [
+        {
+          data: [solved, total - solved],
+          backgroundColor: ["#36A2EB", "#FFCE56"],
+        },
       ],
-      backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#ddd"],
     },
-  ],
-};
+    options: {
+      responsive: true,
+    },
+  });
+}
 
-new Chart(solvedChartCtx, {
-  type: "pie",
-  data: solvedData,
-  options: {
-    responsive: true,
-  },
-});
+// Find the total and solved counts for Easy, Medium, and Hard
+const easySolved = solvedStats.find((d) => d.difficulty === "Easy").count;
+const mediumSolved = solvedStats.find((d) => d.difficulty === "Medium").count;
+const hardSolved = solvedStats.find((d) => d.difficulty === "Hard").count;
+
+const easyTotal = totalStats.find((d) => d.difficulty === "Easy").count;
+const mediumTotal = totalStats.find((d) => d.difficulty === "Medium").count;
+const hardTotal = totalStats.find((d) => d.difficulty === "Hard").count;
+
+createPieChart(
+  document.getElementById("easy-pie-chart").getContext("2d"),
+  easySolved,
+  easyTotal,
+  "Easy"
+);
+createPieChart(
+  document.getElementById("medium-pie-chart").getContext("2d"),
+  mediumSolved,
+  mediumTotal,
+  "Medium"
+);
+createPieChart(
+  document.getElementById("hard-pie-chart").getContext("2d"),
+  hardSolved,
+  hardTotal,
+  "Hard"
+);
 
 // Display language usage (Pie Chart)
-const languageChartCtx = document
-  .getElementById("language-pie-chart")
-  .getContext("2d");
 const languageData =
-  profileData.languageStats.matchedUser.languageProblemCount.map(
+  profileData.data.languageStats.matchedUser.languageProblemCount.map(
     (item) => item.problemsSolved
   );
 const languageLabels =
-  profileData.languageStats.matchedUser.languageProblemCount.map(
+  profileData.data.languageStats.matchedUser.languageProblemCount.map(
     (item) => item.languageName
   );
 
-new Chart(languageChartCtx, {
+new Chart(document.getElementById("language-pie-chart").getContext("2d"), {
   type: "pie",
   data: {
     labels: languageLabels,
     datasets: [
       {
         data: languageData,
-        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0"],
+        backgroundColor: [
+          "#FF6384",
+          "#36A2EB",
+          "#FFCE56",
+          "#4BC0C0",
+          "#9966FF",
+        ],
       },
     ],
   },
@@ -148,31 +113,31 @@ new Chart(languageChartCtx, {
   },
 });
 
-// Display heatmap (submission history over the last 12 months)
-const heatmapDiv = document.getElementById("submission-heatmap");
-const submissionCalendar =
-  profileData.userProfileCalendar.matchedUser.userCalendar.submissionCalendar;
+// Display user badges in a single row
+const badgesContainer = document.getElementById("badges-container");
+const badges = profileData.data.userBadges.matchedUser.badges;
 
-const now = new Date();
-const oneYearAgo = new Date(
-  now.getFullYear() - 1,
-  now.getMonth(),
-  now.getDate()
+badges.forEach((badge) => {
+  if (badge.icon && badge.icon.startsWith("http")) {
+    // Check if badge icon exists
+    const badgeImg = document.createElement("img");
+    badgeImg.src = badge.icon;
+    badgeImg.alt = badge.name;
+    badgeImg.title = badge.name;
+    badgesContainer.appendChild(badgeImg);
+  }
+});
+
+// Display recently solved questions
+const recentSolvedList = document.getElementById("recent-solved-list");
+profileData.data.recentAcSubmissions.recentAcSubmissionList.forEach(
+  (submission) => {
+    const listItem = document.createElement("li");
+    const questionLink = document.createElement("a");
+    questionLink.href = https://leetcode.com/problems/${submission.titleSlug}/;
+    questionLink.textContent = submission.title;
+    questionLink.target = "_blank";
+    listItem.appendChild(questionLink);
+    recentSolvedList.appendChild(listItem);
+  }
 );
-const currentTimestamp = Math.floor(now.getTime() / 1000); // current date in seconds
-const oneYearAgoTimestamp = Math.floor(oneYearAgo.getTime() / 1000); // 1 year ago in seconds
-
-for (
-  let timestamp = oneYearAgoTimestamp;
-  timestamp <= currentTimestamp;
-  timestamp += 86400
-) {
-  // increment day by day
-  const dayDiv = document.createElement("div");
-  dayDiv.classList.add("day");
-
-  const submissionCount = submissionCalendar[timestamp] || 0;
-  dayDiv.setAttribute("data-submissions", submissionCount);
-
-  heatmapDiv.appendChild(dayDiv);
-}

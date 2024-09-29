@@ -3,35 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile Search</title>
+    <title>LeetCode Profile Search</title>
     <style>
+        /* General Body Styling */
         body {
-            font-family: Arial, sans-serif;
-            padding: 50px;
-        }
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            }
 
+        /* Container Styling */
         .container {
             text-align: center;
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            max-width: 400px;
+            width: 100%;
         }
 
+        /* Heading Styling */
+        h1 {
+            font-size: 28px;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        /* Input Field Styling */
         input[type="text"] {
-            width: 300px;
-            padding: 10px;
-            margin: 10px 0;
+            width: 100%;
+            padding: 12px 15px;
+            margin: 15px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
         }
 
+        /* Input Focus Effect */
+        input[type="text"]:focus {
+            border-color: #5b86e5;
+            outline: none;
+            box-shadow: 0 0 8px rgba(91, 134, 229, 0.2);
+        }
+
+        /* Button Styling */
         button {
-            padding: 10px 20px;
+            width: 100%;
+            padding: 12px 0;
+            background-color: #5b86e5;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Button Hover Effect */
+        button:hover {
+            background-color: #36d1dc;
+        }
+
+        /* Error Message Styling */
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        /* Responsive Design for Small Devices */
+        @media (max-width: 480px) {
+            .container {
+                padding: 30px 20px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Search for a Profile</h1>
+        <h1>Search for a LeetCode Profile</h1>
         <form id="searchForm">
-            <input type="text" id="username" placeholder="Enter username" required>
+            <input type="text" id="username" placeholder="Enter LeetCode username" required>
             <button type="submit">Search</button>
         </form>
+        <p class="error-message" id="error-message">Error fetching profile. Please try again!</p>
     </div>
 
     <script>
@@ -39,21 +105,37 @@
             e.preventDefault(); // Prevent the form from submitting the traditional way
 
             // Get the username from the input field
-            const username = document.getElementById('username').value;
+            const username = document.getElementById('username').value.trim();
 
-            // Call the API
-            fetch(`http://localhost:8000/api/v1/profile/profile-fetch?username=${username}`)
-                .then(response => response.json())
-                .then(data => {
-                    // Store the API result in localStorage
-                    localStorage.setItem('profileData', JSON.stringify(data));
+            // Clear any previous error messages
+            const errorMessage = document.getElementById('error-message');
+            errorMessage.style.display = 'none';
 
-                    // Redirect to the result page
-                    window.location.href = 'result.html';
-                })
-                .catch(error => {
-                    console.error('Error fetching profile:', error);
-                });
+            if (username) {
+                // Call the API
+                fetch(http://localhost:8000/api/v1/profile/profile-fetch?username=${username})
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data && data.statusCode === 200) {
+                            // Store the API result in localStorage
+                            localStorage.setItem('profileData', JSON.stringify(data));
+
+                            // Redirect to the result page
+                            window.location.href = 'result.html';
+                        } else {
+                            errorMessage.textContent = 'Profile not found. Please try again!';
+                            errorMessage.style.display = 'block';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching profile:', error);
+                        errorMessage.textContent = 'Error fetching profile. Please try again!';
+                        errorMessage.style.display = 'block';
+                    });
+            } else {
+                errorMessage.textContent = 'Please enter a valid username!';
+                errorMessage.style.display = 'block';
+            }
         });
     </script>
 </body>
