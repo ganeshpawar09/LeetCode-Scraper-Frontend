@@ -2,7 +2,6 @@
 const profileData = JSON.parse(localStorage.getItem("profileData"));
 console.log(profileData);
 
-// Display profile information
 document.getElementById("profile-avatar").src =
   profileData.data.userPublicProfile.matchedUser.profile.userAvatar;
 document.getElementById("profile-username").textContent =
@@ -39,7 +38,7 @@ function createPieChart(ctx, solved, total, label) {
   return new Chart(ctx, {
     type: "pie",
     data: {
-      labels: [${label} Solved, Not Solved],
+      labels: [`${label} Solved`, `Not Solved`],
       datasets: [
         {
           data: [solved, total - solved],
@@ -134,7 +133,8 @@ profileData.data.recentAcSubmissions.recentAcSubmissionList.forEach(
   (submission) => {
     const listItem = document.createElement("li");
     const questionLink = document.createElement("a");
-    questionLink.href = https://leetcode.com/problems/${submission.titleSlug}/;
+    questionLink.href =
+      "https://leetcode.com/problems/${submission.titleSlug}/";
     questionLink.textContent = submission.title;
     questionLink.target = "_blank";
     listItem.appendChild(questionLink);
