@@ -14,7 +14,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            }
+        }
 
         /* Container Styling */
         .container {
@@ -112,14 +112,15 @@
             errorMessage.style.display = 'none';
 
             if (username) {
-                // Call the API
-                fetch(http://localhost:8000/api/v1/profile/profile-fetch?username=${username})
+                console.log(username);
+                // Dynamically insert the username into the fetch URL
+                fetch(`http://localhost:8000/api/v1/profile/profile-fetch?username=${username}`)
                     .then(response => response.json())
                     .then(data => {
                         if (data && data.statusCode === 200) {
                             // Store the API result in localStorage
+                            console.log(data);
                             localStorage.setItem('profileData', JSON.stringify(data));
-
                             // Redirect to the result page
                             window.location.href = 'result.html';
                         } else {
